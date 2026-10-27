@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    ports:
+      - "${JELLYFIN_PORT}:8096"
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}:/config
+      - ${CACHE_DIR}:/cache
+      - ${MEDIA_DIR}:/media
