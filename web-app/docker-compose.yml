@@ -9,8 +9,8 @@ services:
     volumes:
       - ${APP_PATH}:/app
     working_dir: /app
-    # Modificado: Solo arranca la aplicación ya compilada, sin intentar descargar nada
-    command: npm start
+    # Modificado: Ejecuta el build y luego arranca la app en el mismo ciclo de inicio
+    command: sh -c "npm run build && npm start"
     environment:
       - PORT=3000
     networks:
