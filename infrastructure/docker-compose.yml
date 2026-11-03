@@ -11,12 +11,3 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PORTAINER_DATA_PATH}:/data
-
-networks:
-  frontend-net:
-    driver: bridge
-    name: frontend-net
-  backend-net:
-    driver: bridge
-    name: backend-net
-    internal: true
