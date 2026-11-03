@@ -24,3 +24,4 @@ fi
 
 echo "=== Networks Ready ==="
 docker network ls | grep -E "$RED_FRONTEND|$RED_BACKEND"
+

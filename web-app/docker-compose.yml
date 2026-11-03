@@ -6,12 +6,11 @@ services:
     restart: always
     deploy:
       replicas: 3
-    # Maps your local server directory to the container's /app directory using the .env variable
     volumes:
       - ${APP_PATH}:/app
     working_dir: /app
-    # Installs dependencies, builds the Next.js app, and starts the server
-    command: sh -c "npm install && npm run build && npm start"
+    # Modificado: Solo arranca la aplicación ya compilada, sin intentar descargar nada
+    command: npm start
     environment:
       - PORT=3000
     networks:
