@@ -7,14 +7,17 @@ services:
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - DOCKER_MODS=linuxserver/mods:calibre-web-metadata
+      - DOCKER_MODS=linuxserver/mods:universal-calibre
     volumes:
       - ${CONFIG_PATH}:/config
       - ${BOOKS_PATH}:/books
     networks:
       - backend-net
+      - internet-net
     restart: unless-stopped
 
 networks:
   backend-net:
+    external: true
+  internet-net:
     external: true
