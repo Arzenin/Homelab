@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre-web
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - DOCKER_MODS=linuxserver/mods:calibre-web-metadata
+    volumes:
+      - ${CONFIG_PATH}:/config
+      - ${BOOKS_PATH}:/books
+    networks:
+      - backend-net
+    restart: unless-stopped
+
+networks:
+  backend-net:
+    external: true
