@@ -11,8 +11,6 @@ services:
     volumes:
       - ${CONFIG_PATH}:/config
       - ${BOOKS_PATH}:/books
-    ports:
-      - "8083:8083"
     networks:
       - backend-net
     restart: unless-stopped
