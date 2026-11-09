@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   calibre-web:
     image: lscr.io/linuxserver/calibre-web:latest
@@ -7,13 +5,16 @@ services:
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
+      - TZ=Europe/Madrid
+      # Mod that installs calibredb / ebook-convert in /usr/bin (required to
+      # embed metadata in downloads). Needs internet access when the container is created.
       - DOCKER_MODS=linuxserver/mods:universal-calibre
     volumes:
       - ${CONFIG_PATH}:/config
       - ${BOOKS_PATH}:/books
     networks:
-      - backend-net
-      - internet-net
+      - backend-net    # internal: nginx reaches calibre-web through this network
+      - internet-net   # outbound internet only: needed to download the mod
     restart: unless-stopped
 
 networks:
