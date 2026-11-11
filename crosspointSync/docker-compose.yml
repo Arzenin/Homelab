@@ -23,5 +23,5 @@ services:
 networks:
   backend-net:
     external: true
-  # internet-net:
-  #   external: true
+  internet-net:
+    external: true
