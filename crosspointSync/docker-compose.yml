@@ -3,8 +3,12 @@ services:
     image: ghcr.io/crosspoint-reader/crosspoint-sync:main
     container_name: crosspoint-sync
     environment:
+      # Base path when served behind a reverse proxy
+      - BASE_PATH=/crosspoint
+
       # Set to true after creating your accounts to block new sign-ups
       - REGISTRATION_DISABLED=${KOSYNC_REGISTRATION_DISABLED:-false}
+
       # Optional: only needed for connectors (Hardcover, Readwise, ...).
       # Generate with: openssl rand -hex 32
       - TOKEN_ENC_KEY=${KOSYNC_TOKEN_ENC_KEY:-}
