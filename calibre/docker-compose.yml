@@ -1,17 +1,22 @@
 services:
   calibre-web:
-    image: lscr.io/linuxserver/calibre-web:latest
-    container_name: calibre-web
+    # CWA replaces the LinuxServer image; it includes the KOSync endpoint (/kosync)
+    image: crocodilestick/calibre-web-automated:latest
+    container_name: calibre-web   # same name, so nginx-proxy and other containers keep working
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=Europe/Madrid
-      # Mod that installs calibredb / ebook-convert in /usr/bin (required to
-      # embed metadata in downloads). Needs internet access when the container is created.
+      # Keep the Calibre tools mod (ebook-convert / calibredb). Check the version
+      # recommended in the official CWA compose and copy it if it differs.
       - DOCKER_MODS=linuxserver/mods:universal-calibre
     volumes:
+      # Same config folder as before: users, settings and shelves carry over
       - ${CONFIG_PATH}:/config
-      - ${BOOKS_PATH}:/books
+      # Your existing library; it was /books before, CWA expects /calibre-library
+      - ${BOOKS_PATH}:/calibre-library
+      # NEW: must be an EMPTY, separate folder. CWA deletes everything here after importing it
+      - ${INGEST_PATH}:/cwa-book-ingest
     networks:
       - backend-net    # internal: nginx reaches calibre-web through this network
       - internet-net   # outbound internet only: needed to download the mod
