@@ -1,0 +1,57 @@
+services:
+  netdata:
+    image: netdata/netdata:${NETDATA_VERSION:-stable}
+    container_name: netdata
+    restart: unless-stopped
+    hostname: ${NETDATA_HOSTNAME}
+
+    # Share the host PID namespace so Netdata can see host processes
+    pid: host
+
+    # Capabilities required to monitor processes and system internals
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+
+    environment:
+      TZ: ${TZ:-Europe/Madrid}
+      # Docker group GID on the host, needed to read container names/metrics
+      PGID: ${DOCKER_GID}
+      # Disable anonymous telemetry
+      DO_NOT_TRACK: ${NETDATA_DO_NOT_TRACK:-1}
+      # Optional Netdata Cloud connection (leave empty to stay local-only)
+      NETDATA_CLAIM_TOKEN: ${NETDATA_CLAIM_TOKEN:-}
+      NETDATA_CLAIM_ROOMS: ${NETDATA_CLAIM_ROOMS:-}
+      NETDATA_CLAIM_URL: ${NETDATA_CLAIM_URL:-https://app.netdata.cloud}
+
+    ports:
+      # Web UI: <bind ip>:<host port> -> 19999 inside the container
+      - "${NETDATA_BIND_IP:-0.0.0.0}:${NETDATA_HOST_PORT}:19999"
+
+    volumes:
+      # Persistent data stored on the host
+      - ${NETDATA_CONFIG_DIR}:/etc/netdata
+      - ${NETDATA_LIB_DIR}:/var/lib/netdata
+      - ${NETDATA_CACHE_DIR}:/var/cache/netdata
+      # Read-only host information
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      # Docker socket (read-only) to resolve container names
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    networks:
+      - internet-net
+      - backend-net
+
+# Both networks already exist, so they are declared as external
+networks:
+  internet-net:
+    external: true
+  backend-net:
+    external: true
