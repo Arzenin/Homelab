@@ -6,18 +6,23 @@ services:
       # Base path when served behind a reverse proxy
       - BASE_PATH=/crosspoint
 
+      # Trust X-Forwarded-Proto from nginx so the app knows the client used HTTPS.
+      # Only safe because the container publishes no ports and is reachable
+      # only through nginx on backend-net.
+      - TRUST_PROXY=true
+
       # Set to true after creating your accounts to block new sign-ups
       - REGISTRATION_DISABLED=${KOSYNC_REGISTRATION_DISABLED:-false}
 
-      # Optional: only needed for connectors (Hardcover, Readwise, ...).
+      # Required for connectors (Jellyfin, Hardcover, Readwise, ...).
       # Generate with: openssl rand -hex 32
       - TOKEN_ENC_KEY=${KOSYNC_TOKEN_ENC_KEY:-}
     volumes:
       # SQLite database (/data/crosspoint.db): accounts, progress, highlights, stats
       - ${KOSYNC_DATA_PATH}:/data
     networks:
-      - backend-net      # internal: nginx reaches the container through this network
-      # - internet-net   # uncomment only if you use connectors (outbound internet)
+      - backend-net      # internal: nginx and Jellyfin reach the container through this network
+      - internet-net     # outbound internet: cover and metadata lookups, external connectors
     restart: unless-stopped
 
 networks:
